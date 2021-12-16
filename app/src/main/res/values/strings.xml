@@ -18,6 +18,6 @@
     <string name="button_0">0</string>
     <string name="button_dot">.</string>
     <string name="button_result">=</string>
-    <string name="braces">( )</string>
+    <string name="plus_minus">+/-</string>
     <string name="backspace_description">Delete last input</string>
 </resources>
