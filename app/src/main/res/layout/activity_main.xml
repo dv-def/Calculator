@@ -8,6 +8,19 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/tv_work_field"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/default_text_view_margin"
+        android:textColor="@color/white"
+        android:textSize="@dimen/default_text_size"
+        android:gravity="end|bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/screen_divider"/>
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/screen_divider"
         android:layout_width="wrap_content"
@@ -125,7 +138,7 @@
         app:layout_constraintStart_toEndOf="@id/btn_9"
         app:layout_constraintTop_toBottomOf="@id/btn_divide"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/bnt_minus"
+        app:layout_constraintBottom_toTopOf="@id/btn_minus"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
     <Button
@@ -164,12 +177,12 @@
         android:textColor="@color/white"
         app:layout_constraintStart_toEndOf="@id/btn_5"
         app:layout_constraintTop_toBottomOf="@id/btn_9"
-        app:layout_constraintEnd_toStartOf="@id/bnt_minus"
+        app:layout_constraintEnd_toStartOf="@id/btn_minus"
         app:layout_constraintBottom_toTopOf="@id/btn_3"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
     <Button
-        android:id="@+id/bnt_minus"
+        android:id="@+id/btn_minus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_minus"
@@ -191,7 +204,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_4"
         app:layout_constraintEnd_toStartOf="@id/btn_2"
-        app:layout_constraintBottom_toTopOf="@id/btn_plus_minus"
+        app:layout_constraintBottom_toTopOf="@id/btn_sqrt"
         app:layout_constraintHorizontal_chainStyle="spread"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
@@ -230,18 +243,19 @@
         android:textSize="@dimen/default_text_size"
         android:textColor="@color/orange"
         app:layout_constraintStart_toEndOf="@id/btn_3"
-        app:layout_constraintTop_toBottomOf="@id/bnt_minus"
+        app:layout_constraintTop_toBottomOf="@id/btn_minus"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/btn_result"
         style="@style/Widget.AppCompat.Button.Borderless" />
 
     <Button
-        android:id="@+id/btn_plus_minus"
+        android:id="@+id/btn_sqrt"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/plus_minus"
-        android:textColor="@color/white"
+        android:text="@string/sqrt"
+        android:textAllCaps="false"
+        android:textColor="@color/orange"
         android:textSize="@dimen/default_text_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_0"
@@ -256,7 +270,7 @@
         android:text="@string/button_0"
         android:textSize="@dimen/default_text_size"
         android:textColor="@color/white"
-        app:layout_constraintStart_toEndOf="@id/btn_plus_minus"
+        app:layout_constraintStart_toEndOf="@id/btn_sqrt"
         app:layout_constraintTop_toBottomOf="@id/btn_2"
         app:layout_constraintEnd_toStartOf="@id/btn_dot"
         app:layout_constraintBottom_toBottomOf="parent"
