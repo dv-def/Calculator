@@ -1,5 +1,6 @@
 package com.example.calculator;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -8,7 +9,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.calculator.calculator.Calculator;
+
 public class MainActivity extends AppCompatActivity {
+    private final String CALC_EXTRA = "calc";
+    private final String VALUE_EXTRA = "value";
+
     private TextView tvWorkField;
 
     private String plusSymbol;
@@ -17,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
     private String divideSymbol;
     private String lastOperation;
 
+    private Calculator calculator;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +32,15 @@ public class MainActivity extends AppCompatActivity {
 
         setupViews();
         initSymbols();
+
+        if (savedInstanceState != null) {
+            calculator = savedInstanceState.getParcelable(CALC_EXTRA);
+            tvWorkField.setText(savedInstanceState.getString(VALUE_EXTRA));
+        } else {
+            calculator = new Calculator();
+        }
+
+
     }
 
     /**
@@ -59,6 +76,13 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn_sqrt).setOnClickListener(onClickSqrt());
 
         findViewById(R.id.btn_result).setOnClickListener(onClickResult());
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(VALUE_EXTRA, tvWorkField.getText().toString());
+        outState.putParcelable(CALC_EXTRA, calculator);
     }
 
     /**
