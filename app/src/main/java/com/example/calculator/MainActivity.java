@@ -1,7 +1,6 @@
 package com.example.calculator;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
@@ -11,7 +10,7 @@ import android.widget.Toast;
 
 import com.example.calculator.calculator.Calculator;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
     private final String CALC_EXTRA = "calc";
     private final String VALUE_EXTRA = "value";
 
@@ -39,8 +38,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             calculator = new Calculator();
         }
-
-
     }
 
     /**
