@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="ButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+    </style>
+
+    <style name="ButtonStyle.OperationButtonStyle">
+        <item name="android:textColor">@color/orange</item>
+    </style>
+
+    <style name="ButtonStyle.ButtonWithImageStyle">
+        <item name="iconPadding">@dimen/zero</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconTint">@color/orange</item>
+    </style>
+
+    <style name="TextViewStyle" parent="Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">@dimen/zero</item>
+        <item name="android:layout_height">@dimen/zero</item>
+        <item name="android:layout_margin">@dimen/default_text_view_margin</item>
+        <item name="android:textSize">@dimen/default_text_size</item>
+        <item name="android:gravity">end|bottom</item>
+    </style>
+</resources>
