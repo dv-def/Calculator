@@ -16,10 +16,16 @@
         <item name="iconTint">@color/orange</item>
     </style>
 
+    <style name="ButtonStyle.SaveSettings">
+        <item name="android:textSize">@dimen/rb_default_text_size</item>
+        <item name="android:textColor">@color/orange</item>
+        <item name="android:layout_marginBottom">@dimen/default_margin</item>
+    </style>
+
     <style name="TextViewStyle" parent="Widget.AppCompat.Button.Borderless">
         <item name="android:layout_width">@dimen/zero</item>
         <item name="android:layout_height">@dimen/zero</item>
-        <item name="android:layout_margin">@dimen/default_text_view_margin</item>
+        <item name="android:layout_margin">@dimen/default_margin</item>
         <item name="android:textSize">@dimen/default_text_size</item>
         <item name="android:gravity">end|bottom</item>
     </style>

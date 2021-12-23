@@ -18,9 +18,12 @@
     <string name="button_0">0</string>
     <string name="button_dot">.</string>
     <string name="button_result">=</string>
-    <string name="sqrt">sqrt</string>
     <string name="backspace_description">Delete last input</string>
 
     <string name="can_not_calc_percent">Can not calc percent for this value</string>
     <string name="do_nothing">This button does nothing now :(</string>
+
+    <string name="light_theme">Light theme</string>
+    <string name="dark_theme">Dark theme</string>
+    <string name="save">Save</string>
 </resources>

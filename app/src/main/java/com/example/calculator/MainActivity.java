@@ -2,6 +2,7 @@ package com.example.calculator;
 
 import androidx.annotation.NonNull;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -70,7 +71,7 @@ public class MainActivity extends BaseActivity {
         findViewById(R.id.btn_backspace).setOnClickListener(onClickDelete());
         findViewById(R.id.btn_percent).setOnClickListener(onClickPercent());
 
-        findViewById(R.id.btn_sqrt).setOnClickListener(onClickSqrt());
+        findViewById(R.id.btn_settings).setOnClickListener(onClickSettings());
 
         findViewById(R.id.btn_result).setOnClickListener(onClickResult());
     }
@@ -311,29 +312,21 @@ public class MainActivity extends BaseActivity {
     /**
      * @return OnClickListener
      *
-     * onClickListener для кнопки вычисления корня
+     * onClickListener для кнопки результата
      */
-    private View.OnClickListener onClickSqrt() {
-        return view -> {
-            StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
-            if (sb.length() > 0 && lastOperation.isEmpty()) {
-                double number = Double.parseDouble(sb.toString());
-                double result = Math.sqrt(number);
-
-                tvWorkField.setText(String.valueOf(result));
-            } else {
-                Toast.makeText(this, R.string.can_not_calc_percent, Toast.LENGTH_SHORT).show();
-            }
-        };
+    private View.OnClickListener onClickResult() {
+        return view -> Toast.makeText(this, R.string.do_nothing, Toast.LENGTH_SHORT).show();
     }
 
     /**
      * @return OnClickListener
      *
-     * onClickListener для кнопки результата
+     * onClickListener для кнопки настроек
      */
-    private View.OnClickListener onClickResult() {
-        return view -> Toast.makeText(this, R.string.do_nothing, Toast.LENGTH_SHORT).show();
+    private View.OnClickListener onClickSettings() {
+        return view -> {
+            startActivity(new Intent(this, SettingsActivity.class));
+        };
     }
 
 }
