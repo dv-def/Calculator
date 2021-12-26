@@ -92,8 +92,13 @@ public class MainActivity extends BaseActivity {
         outState.putParcelable(CALC_EXTRA, calculator);
 
         outState.putString(LAST_OPERATION, lastOperation);
-        outState.putDouble(OPERAND1, operand1);
-        outState.putDouble(OPERAND2, operand2);
+        if (operand1 != null) {
+            outState.putDouble(OPERAND1, operand1);
+        }
+
+        if (operand2 != null) {
+            outState.putDouble(OPERAND2, operand2);
+        }
     }
 
     /**
