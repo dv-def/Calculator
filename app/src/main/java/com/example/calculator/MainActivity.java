@@ -15,6 +15,10 @@ public class MainActivity extends BaseActivity {
     private final String CALC_EXTRA = "calc";
     private final String VALUE_EXTRA = "value";
 
+    private final String LAST_OPERATION = "lastOperation";
+    private final String OPERAND1 = "operand1";
+    private final String OPERAND2 = "operand2";
+
     private TextView tvWorkField;
 
     private String plusSymbol;
@@ -24,6 +28,8 @@ public class MainActivity extends BaseActivity {
     private String lastOperation;
 
     private Calculator calculator;
+    private Double operand1;
+    private Double operand2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +42,11 @@ public class MainActivity extends BaseActivity {
         if (savedInstanceState != null) {
             calculator = savedInstanceState.getParcelable(CALC_EXTRA);
             tvWorkField.setText(savedInstanceState.getString(VALUE_EXTRA));
+            lastOperation = savedInstanceState.getString(LAST_OPERATION);
+            operand1 = savedInstanceState.getDouble(OPERAND1);
+            operand2 = savedInstanceState.getDouble(OPERAND2);
         } else {
-            calculator = new Calculator();
+            calculator = new Calculator(this);
         }
     }
 
@@ -81,6 +90,10 @@ public class MainActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
         outState.putString(VALUE_EXTRA, tvWorkField.getText().toString());
         outState.putParcelable(CALC_EXTRA, calculator);
+
+        outState.putString(LAST_OPERATION, lastOperation);
+        outState.putDouble(OPERAND1, operand1);
+        outState.putDouble(OPERAND2, operand2);
     }
 
     /**
@@ -134,11 +147,11 @@ public class MainActivity extends BaseActivity {
 
     /**
      *
-     * @param sb - Текущее выражение без знаков операции
-     * @return true если sb содержит другие символы кроме 0
+     * @param str - Текущее выражение без знаков операции
+     * @return true если str содержит другие символы кроме 0
      */
-    private boolean isContainsOtherSymbolsBesidesZero(StringBuilder sb) {
-        char[] symbols  = sb.toString().toCharArray();
+    private boolean isContainsOtherSymbolsBesidesZero(String str) {
+        char[] symbols  = str.toCharArray();
 
         for (char c : symbols) {
             if (c != '0') {
@@ -186,7 +199,7 @@ public class MainActivity extends BaseActivity {
                     Данная проверка нужна чтобы не получить первое число 0000000000
                  */
                 if (lastOperation.isEmpty()) {
-                    if (isContainsOtherSymbolsBesidesZero(sb)) {
+                    if (isContainsOtherSymbolsBesidesZero(sb.toString())) {
                         sb.append(zero);
                     }
                 } else {
@@ -241,15 +254,47 @@ public class MainActivity extends BaseActivity {
     private View.OnClickListener onClickOperationButton() {
         return view -> {
             StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
+            Button btn = (Button) view;
+            String btnText = btn.getText().toString();
+
             if (sb.length() > 0) {
                 String lastSymbol = sb.substring(sb.length() - 1);
-                if (lastSymbol.equals(".") || isOperationSymbol(lastSymbol)) {
+
+                if (lastSymbol.equals(".")) {
                     sb.deleteCharAt(sb.length() - 1);
+                    tvWorkField.setText(sb.toString());
+                    return;
                 }
-                Button btn = (Button) view;
-                String btnText = btn.getText().toString();
-                lastOperation = btnText;
-                sb.append(btnText);
+
+                if (isOperationSymbol(lastSymbol)) {
+                    sb.deleteCharAt(sb.length() - 1);
+                } else {
+                    if (operand1 == null) {
+                        operand1 = Double.parseDouble(tvWorkField.getText().toString());
+                    } else {
+                        String sub = sb.substring(sb.lastIndexOf(lastOperation) + 1);
+                        operand2 = Double.parseDouble(sub);
+
+                        calculator.setOperand1(operand1);
+                        calculator.setOperand2(operand2);
+                        calculator.setOperator(lastOperation);
+
+                        try {
+                            operand1 = Double.parseDouble(calculator.result());
+                        } catch (ArithmeticException e) {
+                            Toast.makeText(this, R.string.can_not_make_operation, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        sb = new StringBuilder();
+                        sb.append(operand1);
+                        lastOperation = "";
+                    }
+
+                }
+
+                    lastOperation = btnText;
+                    sb.append(btnText);
 
                 tvWorkField.setText(sb.toString());
             }
@@ -266,6 +311,8 @@ public class MainActivity extends BaseActivity {
             StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
             sb.delete(0, sb.length());
             lastOperation = "";
+            operand1 = null;
+            operand2 = null;
 
             tvWorkField.setText(sb.toString());
         };
@@ -280,10 +327,13 @@ public class MainActivity extends BaseActivity {
         return view -> {
             StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
             if (sb.length() > 0) {
-                sb.deleteCharAt(sb.length() - 1);
-                if (sb.length() == 0) {
+                String lastSymbol = getLastSymbol(sb);
+                if (isOperationSymbol(lastSymbol)) {
                     lastOperation = "";
+                    operand1 = null;
                 }
+                sb.deleteCharAt(sb.length() - 1);
+
             }
 
             tvWorkField.setText(sb.toString());
@@ -299,8 +349,8 @@ public class MainActivity extends BaseActivity {
         return view -> {
             StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
             if (sb.length() > 0 && lastOperation.isEmpty()) {
-                int number = Integer.parseInt(sb.toString());
-                double result = (double) number / 100;
+                double number = Double.parseDouble(sb.toString());
+                double result = number / 100;
 
                 tvWorkField.setText(String.valueOf(result));
             } else {
@@ -315,7 +365,27 @@ public class MainActivity extends BaseActivity {
      * onClickListener для кнопки результата
      */
     private View.OnClickListener onClickResult() {
-        return view -> Toast.makeText(this, R.string.do_nothing, Toast.LENGTH_SHORT).show();
+        return view -> {
+            try {
+                String text = tvWorkField.getText().toString();
+                String o2 = text.substring(text.lastIndexOf(lastOperation) + 1);
+
+                operand2 = Double.parseDouble(o2);
+
+                calculator.setOperand1(operand1);
+                calculator.setOperand2(operand2);
+                calculator.setOperator(lastOperation);
+
+                String result = calculator.result();
+                tvWorkField.setText(result);
+
+                operand1 = null;
+                operand2 = null;
+                lastOperation = "";
+            } catch (Exception e) {
+                Toast.makeText(this, R.string.can_not_make_operation, Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
     /**
@@ -324,9 +394,8 @@ public class MainActivity extends BaseActivity {
      * onClickListener для кнопки настроек
      */
     private View.OnClickListener onClickSettings() {
-        return view -> {
+        return view ->
             startActivity(new Intent(this, SettingsActivity.class));
-        };
     }
 
 }
