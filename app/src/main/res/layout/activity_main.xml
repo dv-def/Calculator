@@ -145,7 +145,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_4"
         app:layout_constraintEnd_toStartOf="@id/btn_2"
-        app:layout_constraintBottom_toTopOf="@id/btn_sqrt"
+        app:layout_constraintBottom_toTopOf="@id/btn_settings"
         app:layout_constraintHorizontal_chainStyle="spread"
         style="@style/ButtonStyle" />
 
@@ -177,20 +177,19 @@
         style="@style/ButtonStyle.OperationButtonStyle" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_sqrt"
-        android:text="@string/sqrt"
-        android:textAllCaps="false"
+        android:id="@+id/btn_settings"
+        app:icon="@drawable/ic_baseline_settings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/btn_0"
         app:layout_constraintHorizontal_chainStyle="spread"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_1"
-        style="@style/ButtonStyle.OperationButtonStyle"/>
+        style="@style/ButtonStyle.ButtonWithImageStyle"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_0"
         android:text="@string/button_0"
-        app:layout_constraintStart_toEndOf="@id/btn_sqrt"
+        app:layout_constraintStart_toEndOf="@id/btn_settings"
         app:layout_constraintTop_toBottomOf="@id/btn_2"
         app:layout_constraintEnd_toStartOf="@id/btn_dot"
         app:layout_constraintBottom_toBottomOf="parent"
