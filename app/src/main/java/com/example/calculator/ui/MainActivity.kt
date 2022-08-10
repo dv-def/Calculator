@@ -1,406 +1,92 @@
-package com.example.calculator;
+package com.example.calculator.ui
 
-import androidx.annotation.NonNull;
+import android.content.Intent
+import android.os.Bundle
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import com.example.calculator.R
+import com.example.calculator.databinding.ActivityMainBinding
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
+class MainActivity : BaseActivity() {
+    private lateinit var binding: ActivityMainBinding
 
-import com.example.calculator.calculator.Calculator;
+    private lateinit var viewModel: MainViewModel
 
-public class MainActivity extends BaseActivity {
-    private final String CALC_EXTRA = "calc";
-    private final String VALUE_EXTRA = "value";
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater).also { setContentView(it.root) }
 
-    private final String LAST_OPERATION = "lastOperation";
-    private final String OPERAND1 = "operand1";
-    private final String OPERAND2 = "operand2";
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
-    private TextView tvWorkField;
+        viewModel.liveData.observe(this) { resource ->
+            showText(resource)
+        }
 
-    private String plusSymbol;
-    private String minusSymbol;
-    private String multiSymbol;
-    private String divideSymbol;
-    private String lastOperation;
+        initViews()
+    }
 
-    private Calculator calculator;
-    private Double operand1;
-    private Double operand2;
+    private fun initViews() {
+        initNumberButtons()
+        initOperatorButtons()
+        initSymbolButtons()
+        initSettingsButton()
+    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        setupViews();
-        initSymbols();
-
-        if (savedInstanceState != null) {
-            calculator = savedInstanceState.getParcelable(CALC_EXTRA);
-            tvWorkField.setText(savedInstanceState.getString(VALUE_EXTRA));
-            lastOperation = savedInstanceState.getString(LAST_OPERATION);
-            operand1 = savedInstanceState.getDouble(OPERAND1);
-            operand2 = savedInstanceState.getDouble(OPERAND2);
-        } else {
-            calculator = new Calculator(this);
+    private fun initNumberButtons() {
+        with(binding) {
+            btn0.setOnClickListener { viewModel.onClickNumber("0") }
+            btn1.setOnClickListener { viewModel.onClickNumber("1") }
+            btn2.setOnClickListener { viewModel.onClickNumber("2") }
+            btn3.setOnClickListener { viewModel.onClickNumber("3") }
+            btn4.setOnClickListener { viewModel.onClickNumber("4") }
+            btn5.setOnClickListener { viewModel.onClickNumber("5") }
+            btn6.setOnClickListener { viewModel.onClickNumber("6") }
+            btn7.setOnClickListener { viewModel.onClickNumber("7") }
+            btn8.setOnClickListener { viewModel.onClickNumber("8") }
+            btn9.setOnClickListener { viewModel.onClickNumber("9") }
         }
     }
 
-    /**
-     * Устанавливает главное поле
-     * Устанавливает onClickListener для кнопок
-     */
-    private void setupViews() {
-        tvWorkField = findViewById(R.id.tv_work_field);
-
-        findViewById(R.id.btn_1).setOnClickListener(onClickNumber());
-        findViewById(R.id.btn_2).setOnClickListener(onClickNumber());
-        findViewById(R.id.btn_3).setOnClickListener(onClickNumber());
-        findViewById(R.id.btn_4).setOnClickListener(onClickNumber());
-        findViewById(R.id.btn_5).setOnClickListener(onClickNumber());
-        findViewById(R.id.btn_6).setOnClickListener(onClickNumber());
-        findViewById(R.id.btn_7).setOnClickListener(onClickNumber());
-        findViewById(R.id.btn_8).setOnClickListener(onClickNumber());
-        findViewById(R.id.btn_9).setOnClickListener(onClickNumber());
-
-        findViewById(R.id.btn_0).setOnClickListener(onClickZero());
-
-        findViewById(R.id.btn_dot).setOnClickListener(onClickDot());
-
-        findViewById(R.id.btn_plus).setOnClickListener(onClickOperationButton());
-        findViewById(R.id.btn_minus).setOnClickListener(onClickOperationButton());
-        findViewById(R.id.btn_multi).setOnClickListener(onClickOperationButton());
-        findViewById(R.id.btn_divide).setOnClickListener(onClickOperationButton());
-
-        findViewById(R.id.btn_c).setOnClickListener(onClickClear());
-        findViewById(R.id.btn_backspace).setOnClickListener(onClickDelete());
-        findViewById(R.id.btn_percent).setOnClickListener(onClickPercent());
-
-        findViewById(R.id.btn_settings).setOnClickListener(onClickSettings());
-
-        findViewById(R.id.btn_result).setOnClickListener(onClickResult());
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(VALUE_EXTRA, tvWorkField.getText().toString());
-        outState.putParcelable(CALC_EXTRA, calculator);
-
-        outState.putString(LAST_OPERATION, lastOperation);
-        if (operand1 != null) {
-            outState.putDouble(OPERAND1, operand1);
-        }
-
-        if (operand2 != null) {
-            outState.putDouble(OPERAND2, operand2);
+    private fun initOperatorButtons() {
+        with(binding) {
+            btnPlus.setOnClickListener { viewModel.onClickOperator(getString(R.string.button_plus)) }
+            btnMinus.setOnClickListener { viewModel.onClickOperator(getString(R.string.button_minus)) }
+            btnMulti.setOnClickListener { viewModel.onClickOperator(getString(R.string.button_multi)) }
+            btnDivide.setOnClickListener { viewModel.onClickOperator(getString(R.string.button_divide)) }
         }
     }
 
-    /**
-     * Устанавливает первоначальные значение для строк операций
-     */
-    private void initSymbols() {
-        plusSymbol = getString(R.string.button_plus);
-        minusSymbol = getString(R.string.button_minus);
-        multiSymbol = getString(R.string.button_multi);
-        divideSymbol = getString(R.string.button_divide);
-
-        lastOperation = "";
-    }
-
-    /**
-     * @param sb - Текущее выражение
-     * @return String - последний символ в выражении
-     */
-    private String getLastSymbol(StringBuilder sb) {
-        if (sb.length() == 0) {
-            return "";
+    private fun initSymbolButtons() {
+        with(binding) {
+            btnC.setOnClickListener { viewModel.onClear() }
+            btnDot.setOnClickListener { viewModel.onClickDot() }
+            btnPercent.setOnClickListener { viewModel.onClickPercent() }
+            btnBackspace.setOnClickListener { viewModel.onClickBackspace() }
+            btnResult.setOnClickListener { viewModel.onClickResult() }
         }
-
-        return sb.substring(sb.length() - 1);
     }
 
-    /**
-     * @param lastSymbol - символ из выражеия
-     * @return true, если symbol является знаком операции (+, -, /, *)
-     */
-    private boolean isOperationSymbol(String lastSymbol) {
-        return lastSymbol.equals(plusSymbol) || lastSymbol.equals(minusSymbol) || lastSymbol.equals(multiSymbol) || lastSymbol.equals(divideSymbol);
-    }
-
-    /**
-     * @param sb - Текущее выражение
-     * @return true если в выражении еще нет знака операции и число содержит точку
-     * ИЛИ
-     * если число после последнего знака операции содержит точку
-     */
-    private boolean isNumberAlreadyWithDot(StringBuilder sb) {
-        final String dot = getString(R.string.button_dot);
-        final String currentText = sb.toString();
-        if (lastOperation.isEmpty()) {
-            return currentText.contains(dot);
+    private fun initSettingsButton() {
+        binding.btnSettings.setOnClickListener {
+            startActivity(
+                Intent(
+                    this,
+                    SettingsActivity::class.java
+                )
+            )
         }
-
-        final int lastOperationSymbolIndex = currentText.lastIndexOf(lastOperation);
-        return currentText.substring(lastOperationSymbolIndex).contains(dot);
     }
 
-    /**
-     *
-     * @param str - Текущее выражение без знаков операции
-     * @return true если str содержит другие символы кроме 0
-     */
-    private boolean isContainsOtherSymbolsBesidesZero(String str) {
-        char[] symbols  = str.toCharArray();
+    private fun showText(resource: Resource<String>) {
+        when(resource) {
+            is Resource.Success -> {
+                binding.tvWorkField.text = resource.data.trim()
+            }
 
-        for (char c : symbols) {
-            if (c != '0') {
-                return true;
+            is Resource.Error -> {
+                Toast.makeText(this, resource.message, Toast.LENGTH_SHORT).show()
             }
         }
-
-        return false;
-    }
-
-    /**
-     * @return OnClickListener
-     *
-     * onClickListener для кнопок 1-9
-     */
-    private View.OnClickListener onClickNumber() {
-        return view -> {
-            String currentText = tvWorkField.getText().toString();
-            Button btn = (Button) view;
-            if (currentText.length() == 1 && currentText.startsWith(getString(R.string.button_0))) {
-                currentText = btn.getText().toString();
-            } else {
-                currentText += btn.getText().toString();
-            }
-            tvWorkField.setText(currentText);
-        };
-    }
-
-    /**
-     * @return OnClickListener
-     *
-     * onClickListener для кнопки 0
-     */
-    private View.OnClickListener onClickZero() {
-        return view -> {
-            final String zero = getString(R.string.button_0);
-            StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
-
-            if (sb.length() == 0) {
-                sb.append(zero);
-            } else {
-                /*
-                    Проверка на отсутствие знаков операций
-                    если их нет - значит мы все еще вводим первое число.
-                    Данная проверка нужна чтобы не получить первое число 0000000000
-                 */
-                if (lastOperation.isEmpty()) {
-                    if (isContainsOtherSymbolsBesidesZero(sb.toString())) {
-                        sb.append(zero);
-                    }
-                } else {
-                    String last = getLastSymbol(sb); // последний символ в выражении
-                    String penultimate;              // предпоследний символ в выражении
-
-                    if (sb.length() > 2) {
-                        penultimate = sb.substring(sb.length() - 2, sb.length() - 1);
-                    } else {
-                        penultimate = sb.substring(0, 1);
-                    }
-
-                    /*
-                        Данная проверка нужна чтобы после знака операции
-                        вводимое число не содержало лишних нулей
-                        Пример такого выражения: +0000000123
-                     */
-                    if (!isOperationSymbol(penultimate)) {
-                        sb.append(zero);
-                    } else {
-                        if (!last.equals(zero)) {
-                            sb.append(zero);
-                        }
-                    }
-                }
-            }
-            tvWorkField.setText(sb.toString());
-        };
-    }
-
-    /**
-     * @return OnClickListener
-     *
-     * onClickListener для кнопки символа точки
-     */
-    private View.OnClickListener onClickDot() {
-        return view -> {
-            final StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
-
-            String textWithDot = "";
-            if (isOperationSymbol(getLastSymbol(sb)) || sb.length() == 0) {
-                textWithDot = "0.";
-            } else if (!isNumberAlreadyWithDot(sb)) {
-                textWithDot = ".";
-            }
-            sb.append(textWithDot);
-
-            tvWorkField.setText(sb.toString());
-        };
-    }
-
-    private View.OnClickListener onClickOperationButton() {
-        return view -> {
-            StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
-            Button btn = (Button) view;
-            String btnText = btn.getText().toString();
-
-            if (sb.length() > 0) {
-                String lastSymbol = sb.substring(sb.length() - 1);
-
-                if (lastSymbol.equals(".")) {
-                    sb.deleteCharAt(sb.length() - 1);
-                    tvWorkField.setText(sb.toString());
-                    return;
-                }
-
-                if (isOperationSymbol(lastSymbol)) {
-                    sb.deleteCharAt(sb.length() - 1);
-                } else {
-                    if (operand1 == null) {
-                        operand1 = Double.parseDouble(tvWorkField.getText().toString());
-                    } else {
-                        String sub = sb.substring(sb.lastIndexOf(lastOperation) + 1);
-                        operand2 = Double.parseDouble(sub);
-
-                        calculator.setOperand1(operand1);
-                        calculator.setOperand2(operand2);
-                        calculator.setOperator(lastOperation);
-
-                        try {
-                            operand1 = Double.parseDouble(calculator.result());
-                        } catch (ArithmeticException e) {
-                            Toast.makeText(this, R.string.can_not_make_operation, Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        sb = new StringBuilder();
-                        sb.append(operand1);
-                        lastOperation = "";
-                    }
-
-                }
-
-                    lastOperation = btnText;
-                    sb.append(btnText);
-
-                tvWorkField.setText(sb.toString());
-            }
-        };
-    }
-
-    /**
-     * @return OnClickListener
-     *
-     * onClickListener для кнопки очистки поля
-     */
-    private View.OnClickListener onClickClear() {
-        return view -> {
-            StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
-            sb.delete(0, sb.length());
-            lastOperation = "";
-            operand1 = null;
-            operand2 = null;
-
-            tvWorkField.setText(sb.toString());
-        };
-    }
-
-    /**
-     * @return OnClickListener
-     *
-     * onClickListener для кнопки удаления последнего символа
-     */
-    private View.OnClickListener onClickDelete() {
-        return view -> {
-            StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
-            if (sb.length() > 0) {
-                String lastSymbol = getLastSymbol(sb);
-                if (isOperationSymbol(lastSymbol)) {
-                    lastOperation = "";
-                    operand1 = null;
-                }
-                sb.deleteCharAt(sb.length() - 1);
-
-            }
-
-            tvWorkField.setText(sb.toString());
-        };
-    }
-
-    /**
-     * @return OnClickListener
-     *
-     * onClickListener для кнопки процента
-     */
-    private View.OnClickListener onClickPercent() {
-        return view -> {
-            StringBuilder sb = new StringBuilder(tvWorkField.getText().toString());
-            if (sb.length() > 0 && lastOperation.isEmpty()) {
-                double number = Double.parseDouble(sb.toString());
-                double result = number / 100;
-
-                tvWorkField.setText(String.valueOf(result));
-            } else {
-                Toast.makeText(this, R.string.can_not_calc_percent, Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-
-    /**
-     * @return OnClickListener
-     *
-     * onClickListener для кнопки результата
-     */
-    private View.OnClickListener onClickResult() {
-        return view -> {
-            try {
-                String text = tvWorkField.getText().toString();
-                String o2 = text.substring(text.lastIndexOf(lastOperation) + 1);
-
-                operand2 = Double.parseDouble(o2);
-
-                calculator.setOperand1(operand1);
-                calculator.setOperand2(operand2);
-                calculator.setOperator(lastOperation);
-
-                String result = calculator.result();
-                tvWorkField.setText(result);
-
-                operand1 = null;
-                operand2 = null;
-                lastOperation = "";
-            } catch (Exception e) {
-                Toast.makeText(this, R.string.can_not_make_operation, Toast.LENGTH_SHORT).show();
-            }
-        };
-    }
-
-    /**
-     * @return OnClickListener
-     *
-     * onClickListener для кнопки настроек
-     */
-    private View.OnClickListener onClickSettings() {
-        return view ->
-            startActivity(new Intent(this, SettingsActivity.class));
     }
 
 }

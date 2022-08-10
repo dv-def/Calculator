@@ -1,55 +1,52 @@
-package com.example.calculator;
+package com.example.calculator.ui
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.RadioButton;
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.content.Intent
+import com.example.calculator.R
+import com.example.calculator.databinding.ActivitySettingsBinding
 
-import com.google.android.material.button.MaterialButton;
+class SettingsActivity : BaseActivity() {
+    private lateinit var binding: ActivitySettingsBinding
+    private lateinit var sharedPreferences: SharedPreferences
 
-public class SettingsActivity extends BaseActivity {
-    private SharedPreferences sharedPreferences;
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater).also { setContentView(it.root) }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE)
+        val currentTheme = sharedPreferences.getInt(THEME, R.style.Theme_Calculator_Light)
 
-        sharedPreferences = getSharedPreferences(BaseActivity.SHARED_PREF, MODE_PRIVATE);
-        int currentTheme = sharedPreferences.getInt(BaseActivity.THEME, R.style.Theme_Calculator_Light);
-
-        RadioButton rbLight = findViewById(R.id.rb_light);
-        rbLight.setOnClickListener(onRadioButtonClick());
-        rbLight.setChecked(currentTheme == R.style.Theme_Calculator_Light);
-
-        RadioButton rbDark = findViewById(R.id.rb_dark);
-        rbDark.setOnClickListener(onRadioButtonClick());
-        rbDark.setChecked(currentTheme == R.style.Theme_Calculator_Dark);
-
-        MaterialButton save = findViewById(R.id.btn_save_settings);
-        save.setOnClickListener(onClickSave());
-    }
-
-    private View.OnClickListener onRadioButtonClick() {
-        return view -> {
-
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-
-            switch (view.getId()) {
-                case R.id.rb_light:
-                    editor.putInt(BaseActivity.THEME, R.style.Theme_Calculator_Light);
-                    break;
-                case R.id.rb_dark:
-                    editor.putInt(BaseActivity.THEME, R.style.Theme_Calculator_Dark);
+        with(binding) {
+            rbLight.isChecked = currentTheme == R.style.Theme_Calculator_Light
+            rbLight.setOnClickListener {
+                onRadioButtonClick(it.id)
             }
 
-            editor.apply();
-            recreate();
-        };
+            rbDark.isChecked = currentTheme == R.style.Theme_Calculator_Dark
+            rbDark.setOnClickListener {
+                onRadioButtonClick(it.id)
+            }
+
+            btnSaveSettings.setOnClickListener {
+                startActivity(
+                    Intent(
+                        this@SettingsActivity,
+                        MainActivity::class.java
+                    )
+                )
+            }
+        }
     }
 
-    private View.OnClickListener onClickSave() {
-        return view -> startActivity(new Intent(this, MainActivity.class));
+    private fun onRadioButtonClick(viewId: Int) {
+        val editor = sharedPreferences.edit()
+        when (viewId) {
+            R.id.rb_light -> editor.putInt(THEME, R.style.Theme_Calculator_Light)
+            R.id.rb_dark -> editor.putInt(THEME, R.style.Theme_Calculator_Dark)
+        }
+        editor.apply()
+        recreate()
     }
 }

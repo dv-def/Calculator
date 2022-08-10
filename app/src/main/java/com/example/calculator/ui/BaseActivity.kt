@@ -1,24 +1,22 @@
-package com.example.calculator;
+package com.example.calculator.ui
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import com.example.calculator.R
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-public class BaseActivity extends AppCompatActivity {
-    public static final String SHARED_PREF = "SETTINGS";
-    public static final String THEME = "THEME";
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setTheme(getThemeSetting());
+open class BaseActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setTheme(getSelectedTheme())
     }
 
-    private int getThemeSetting() {
-        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE);
-        return sharedPreferences.getInt(THEME, R.style.Theme_Calculator_Light);
+    private fun getSelectedTheme(): Int {
+        val sharedPreferences = getSharedPreferences(SHARED_PREF, MODE_PRIVATE)
+        return sharedPreferences.getInt(THEME, R.style.Theme_Calculator_Light)
     }
 
+    companion object {
+        const val SHARED_PREF = "SETTINGS"
+        const val THEME = "THEME"
+    }
 }
